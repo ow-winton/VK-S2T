@@ -4,50 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e78ec36a-a979-4d1d-875c-1f7037b37f2b" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/VK-S2T.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/.ipynb_checkpoints/config_gloss_free-checkpoint.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configs/config_gloss_free.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dabao/对帧数据重新匹配和打包.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/definition.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/__init_.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/csv2train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/framedownsample.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/imageTo4d.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/img_key_enhanced.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/keypoint_fuse.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mypackage/pair2text.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/how2sign_realigned_test.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/how2sign_realigned_train.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/how2sign_realigned_val.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/labels.dev" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/labels.test" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/save/labels.train" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vklp_demo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/1生成数据集.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/2打包进入数据集.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/3_Resize数据集.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/frame_0000.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/frame_0151.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/readme.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/检查非0点.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/验证生成的黑图片.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/PIL_fromarray对比.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/norm_0000.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/测试seq函数的作用.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/测试关键点减少相加的维度是不是提高运算效率.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/测试列表和tensor运算时间.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/测试/测试图片归一化.py" afterDir="false" />
+    <list default="true" id="e78ec36a-a979-4d1d-875c-1f7037b37f2b" name="更改" comment="更新了data loader">
+      <change afterPath="$PROJECT_DIR$/metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/实验步骤.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vklp_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/vklp_demo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,40 +42,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.1生成数据集.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PIL_fromarray对比.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dataloader_Test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.datasets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.pair2text.executor&quot;: &quot;Run&quot;,
-    &quot;Python.对帧数据重新匹配和打包.executor&quot;: &quot;Run&quot;,
-    &quot;Python.检查非0点.executor&quot;: &quot;Run&quot;,
-    &quot;Python.测试.executor&quot;: &quot;Run&quot;,
-    &quot;Python.测试seq函数的作用.executor&quot;: &quot;Run&quot;,
-    &quot;Python.测试关键点减少相加的维度是不是提高运算效率.executor&quot;: &quot;Run&quot;,
-    &quot;Python.测试列表和tensor运算时间.executor&quot;: &quot;Run&quot;,
-    &quot;Python.测试图片归一化.executor&quot;: &quot;Run&quot;,
-    &quot;Python.验证生成的黑图片.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/VK-S2T/test&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python 测试.Python 测试 (models.py 内).executor": "Run",
+    "Python.1生成数据集.executor": "Run",
+    "Python.PIL_fromarray对比.executor": "Run",
+    "Python.dataloader_Test.executor": "Run",
+    "Python.datasets.executor": "Run",
+    "Python.models.executor": "Run",
+    "Python.pair2text.executor": "Run",
+    "Python.对帧数据重新匹配和打包.executor": "Run",
+    "Python.检查非0点.executor": "Run",
+    "Python.测试.executor": "Run",
+    "Python.测试seq函数的作用.executor": "Run",
+    "Python.测试关键点减少相加的维度是不是提高运算效率.executor": "Run",
+    "Python.测试列表和tensor运算时间.executor": "Run",
+    "Python.测试图片归一化.executor": "Run",
+    "Python.验证生成的黑图片.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/VK-S2T",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\VK-S2T" />
       <recent name="D:\VK-S2T\test" />
       <recent name="D:\VK-S2T\data\json\test" />
       <recent name="D:\VK-S2T\data\frame\dev" />
-      <recent name="D:\VK-S2T" />
       <recent name="D:\" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -123,53 +88,7 @@
       <recent name="D:\VK-S2T\data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.dataloader_Test">
-    <configuration name="对帧数据重新匹配和打包" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="VK-S2T" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dabao" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dabao/对帧数据重新匹配和打包.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="检查非0点" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="VK-S2T" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片/检查非0点.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.models">
     <configuration name="1生成数据集" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="VK-S2T" />
       <option name="ENV_FILES" value="" />
@@ -377,7 +296,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pair2text" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="models" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="VK-S2T" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -386,12 +305,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mypackage" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mypackage/pair2text.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/models.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -400,13 +319,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python 测试 (models.py 内)" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="VK-S2T" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/models.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.models" />
+        <item itemvalue="Python 测试.Python 测试 (models.py 内)" />
         <item itemvalue="Python.dataloader_Test" />
         <item itemvalue="Python.datasets" />
         <item itemvalue="Python.1生成数据集" />
-        <item itemvalue="Python.对帧数据重新匹配和打包" />
-        <item itemvalue="Python.pair2text" />
       </list>
     </recent_temporary>
   </component>
@@ -442,18 +377,35 @@
       <workItem from="1720358669003" duration="5532000" />
       <workItem from="1720411039881" duration="7130000" />
       <workItem from="1720476779359" duration="144000" />
-      <workItem from="1720602466677" duration="145000" />
+      <workItem from="1720602466677" duration="4835000" />
+      <workItem from="1720657830338" duration="475000" />
+      <workItem from="1720659648019" duration="3431000" />
+      <workItem from="1720665836296" duration="7137000" />
     </task>
+    <task id="LOCAL-00001" summary="更新了data loader">
+      <option name="closed" value="true" />
+      <created>1720602636640</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720602636640</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="更新了data loader" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新了data loader" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/VK_S2T$dataloader_Test.coverage" NAME="dataloader_Test 覆盖结果" MODIFIED="1720415107609" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/VK_S2T$datasets.coverage" NAME="datasets 覆盖结果" MODIFIED="1720411376573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/VK_S2T$1.coverage" NAME="1生成数据集 覆盖结果" MODIFIED="1720264565958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片" />
-    <SUITE FILE_PATH="coverage/VK_S2T$.coverage" NAME="验证生成的黑图片 覆盖结果" MODIFIED="1720264604882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/关键点数据测试/读取关键点生成纯黑背景图片" />
+    <SUITE FILE_PATH="coverage/VK_S2T$.coverage" NAME=" 覆盖结果" MODIFIED="1720674647192" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/VK_S2T$models.coverage" NAME="models 覆盖结果" MODIFIED="1720674779418" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/VK_S2T$tensor.coverage" NAME="测试列表和tensor运算时间 覆盖结果" MODIFIED="1719741740460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/测试" />
     <SUITE FILE_PATH="coverage/VK_S2T$pair2text.coverage" NAME="pair2text 覆盖结果" MODIFIED="1720257362108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mypackage" />
     <SUITE FILE_PATH="coverage/VK_S2T$PIL_fromarray.coverage" NAME="PIL_fromarray对比 覆盖结果" MODIFIED="1719741027772" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/测试" />

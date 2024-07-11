@@ -207,7 +207,8 @@ class S2T_Dataset(Dataset.Dataset):
         mask_gen = pad_sequence(mask_gen, padding_value=PAD_IDX, batch_first=True)
         img_padding_mask = (mask_gen != PAD_IDX).long()
 
-        tgt_input = self.tokenizer(tgt_batch, return_tensors="pt", padding=True, truncation=True)
+        with self.tokenizer.as_target_tokenizer():
+            tgt_input = self.tokenizer(tgt_batch, return_tensors="pt", padding=True, truncation=True)
 
         src_input = {
             'img_ids': img_batch,
@@ -217,6 +218,11 @@ class S2T_Dataset(Dataset.Dataset):
             'src_length_batch': src_length_batch,
             'new_src_length_batch': new_src_lengths,
         }
-
-
+        if self.training_refurbish:
+            masked_tgt = utils.NoiseInjecting(tgt_batch, self.args.noise_rate, noise_type=self.args.noise_type, random_shuffle=self.args.random_shuffle, is_train=(self.phase=='train'))
+            with self.tokenizer.as_target_tokenizer():
+                masked_tgt_input = self.tokenizer(masked_tgt, return_tensors="pt", padding = True,  truncation=True)
+            return src_input, tgt_input, masked_tgt_input
         return src_input, tgt_input
+    def __str__(self):
+        return f'#total {self.phase} set: {len(self.list)}.'
