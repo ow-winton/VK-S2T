@@ -10,6 +10,11 @@ from vidaug import augmentors as va
 from definition import *
 import random
 import numpy as np
+import os
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
+
+
 class S2T_Dataset(Dataset.Dataset):
     def __init__(self, path,tokenizer,config,args,phase,training_refurbish=False):
         '''
@@ -62,43 +67,58 @@ class S2T_Dataset(Dataset.Dataset):
 
     def load_imgs(self, paths):
         data_transforms = transforms.Compose([
+
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225]),
         ])
+
+        imgs = []
+        for img_path in paths:
+            # 使用cv2读取图像，然后转换颜色空间
+            img = cv2.imread(img_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # 转换为PIL图像以使用transforms
+            img = Image.fromarray(img)
+            # 应用定义的转换
+            img = data_transforms(img)
+            imgs.append(img)
+
+        # 使用torch.stack来合并所有图像张量
+        return torch.stack(imgs)
         '''
         这段代码会截断到max length 比如500个训练数据选300个      
         '''
-        if len(paths) > self.max_length:
-            # 由于我的关键点和图像是严格匹配的，所以random sample 是不行的。
-            # tmp = sorted(random.sample(range(len(paths)), k=self.max_length))
-            # new_paths = []
-            # for i in tmp:
-            #     new_paths.append(paths[i])
-            # paths = new_paths
-            paths = paths[:self.max_length]
-
-        imgs = torch.zeros(len(paths), 3, self.args.input_size2, self.args.input_size)
-        # 注意！！！！ 因为我们有input_size 和output_size ,而且我取消了resize，所以提前要按照这个大小去处理好数据！
-        # 这样我的imgs才能完整存储图像的信息！！ 对于关键点，也要存储成这样，同时要对关键点数据的坐标也提前处理好，保证resize 以后依然能正常匹配到对应关键点
-        # 这需要的就是对关键点的数据的处理了。
-        batch_image = []
-        for i,img_path in enumerate(paths):
-            img = cv2.imread(img_path)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            # 我怀疑转换成PIL没有意义，因为我不打算做数据增强
-            # img = Image.fromarray(img)
-            batch_image.append(img)
-
-        # 这里的内容是为了对训练集进行数据增强，data augmentation，我并不打算做数据增强，所以删除
-        # if self.phase == "train":
-        #     batch_image
-
-        for i, img in enumerate(batch_image):
-            # resize 的过程我打算提前在本地做好，而不是交给模型去resize，节省cost ，同时也方便我align 关键点和图像
-            # img = img.resize(resize)
-            img = data_transforms(img)
-            imgs[i] = img
-        return imgs
+        # if len(paths) > self.max_length:
+        #     # 由于我的关键点和图像是严格匹配的，所以random sample 是不行的。
+        #     # tmp = sorted(random.sample(range(len(paths)), k=self.max_length))
+        #     # new_paths = []
+        #     # for i in tmp:
+        #     #     new_paths.append(paths[i])
+        #     # paths = new_paths
+        #     paths = paths[:self.max_length]
+        #
+        # imgs = torch.zeros(len(paths), 3, self.args.input_size2, self.args.input_size)
+        # # 注意！！！！ 因为我们有input_size 和output_size ,而且我取消了resize，所以提前要按照这个大小去处理好数据！
+        # # 这样我的imgs才能完整存储图像的信息！！ 对于关键点，也要存储成这样，同时要对关键点数据的坐标也提前处理好，保证resize 以后依然能正常匹配到对应关键点
+        # # 这需要的就是对关键点的数据的处理了。
+        # batch_image = []
+        # for i,img_path in enumerate(paths):
+        #     img = cv2.imread(img_path)
+        #     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #     # 我怀疑转换成PIL没有意义，因为我不打算做数据增强
+        #     # img = Image.fromarray(img)
+        #     batch_image.append(img)
+        #
+        # # 这里的内容是为了对训练集进行数据增强，data augmentation，我并不打算做数据增强，所以删除
+        # # if self.phase == "train":
+        # #     batch_image
+        #
+        # for i, img in enumerate(batch_image):
+        #     # resize 的过程我打算提前在本地做好，而不是交给模型去resize，节省cost ，同时也方便我align 关键点和图像
+        #     # img = img.resize(resize)
+        #     img = data_transforms(img)
+        #     imgs[i] = img
+        # return imgs
     def load_kps(self, paths):
         '''
         对关键点处理最大的问题 ：
@@ -120,30 +140,42 @@ class S2T_Dataset(Dataset.Dataset):
         :return: 返回关键点的张量， 它和图片张量大小一样，每个元素存储的是对应关键点和附近关键点的confidence
         '''
         data_transforms = transforms.Compose([
+
             transforms.ToTensor(),
             # transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225]),
         ])
-        if len(paths) > self.max_length:
-            paths = paths[:self.max_length]
-        # 设置一个零向量矩阵，准备保存我们的关键点信息
-        kps = torch.zeros(len(paths), 3, self.args.input_size2, self.args.input_size)
-        # 我本来认为将三维度都设为confi会降低运算效率，但是对比过性能以后发现其实其他维度全加0 并没有明显的降低运算时间
-        # 但是我依旧想先用一个维度去保存
-        # 但是也可以用三个维度保存去进行训练， 因为这样可能会最大化两个聚类的分布？
-        # 具体的还是要实验
-        batch_kps = []
-        for i, kps_path in enumerate(paths):
-            kp = cv2.imread(kps_path)
-            kp = cv2.cvtColor(kp, cv2.COLOR_BGR2RGB)
+        # if len(paths) > self.max_length:
+        #     paths = paths[:self.max_length]
+        # # 设置一个零向量矩阵，准备保存我们的关键点信息
+        # kps = torch.zeros(len(paths), 3, self.args.input_size2, self.args.input_size)
+        # # 我本来认为将三维度都设为confi会降低运算效率，但是对比过性能以后发现其实其他维度全加0 并没有明显的降低运算时间
+        # # 但是我依旧想先用一个维度去保存
+        # # 但是也可以用三个维度保存去进行训练， 因为这样可能会最大化两个聚类的分布？
+        # # 具体的还是要实验
+        # batch_kps = []
+        # for i, kps_path in enumerate(paths):
+        #     kp = cv2.imread(kps_path)
+        #     kp = cv2.cvtColor(kp, cv2.COLOR_BGR2RGB)
+        #
+        #     batch_kps.append(kp)
+        #
+        # for i, kp in enumerate(batch_kps):
+        #     # resize 的过程我打算提前在本地做好，而不是交给模型去resize，节省cost ，同时也方便我align 关键点和图像
+        #     # img = img.resize(resize)
+        #     kp = data_transforms(kp)
+        #     kps[i] = kp
+        #
+        # return kps
+        kps = []
+        for kp_path in paths:
+            kp = cv2.imread(kp_path)
+            kp = cv2.cvtColor(kp, cv2.COLOR_BGR2RGB)  # 确保以RGB格式加载
+            kp = Image.fromarray(kp)  # 转换为PIL图像
+            kp = data_transforms(kp)  # 应用变换
+            kps.append(kp)
 
-            batch_kps.append(kp)
-
-        for i, kp in enumerate(batch_kps):
-            # resize 的过程我打算提前在本地做好，而不是交给模型去resize，节省cost ，同时也方便我align 关键点和图像
-            # img = img.resize(resize)
-            kp = data_transforms(kp)
-            kps[i] = kp
-
+        # 使用torch.stack合并所有关键点张量
+        kps = torch.stack(kps)
         return kps
     def load_both(self,path1,path2):
         '''

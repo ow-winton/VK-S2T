@@ -154,7 +154,7 @@ def main(args,config):
         pin_memory=args.pin_mem,
     )
 
-    print("从这一步   creating model")
-
-
-    model = SLRCLIP
+    print(f"Creating model:")
+    model = SLRCLIP(config=config)
+    model.to(device)
+    print(model)

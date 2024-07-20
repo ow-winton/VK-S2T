@@ -10,7 +10,7 @@ training:
   wandb: disabled # online or disabled
   scale_embedding: False
 model:
-  tokenizer: /root/autodl-tmp/GFSLT-VLP-main/pretrain_models/MBart_trimmed
-  transformer: /root/autodl-tmp/GFSLT-VLP-main/pretrain_models/MBart_trimmed
-  visual_encoder: /root/autodl-tmp/GFSLT-VLP-main/pretrain_models/mytran
+  tokenizer: D:\VK-S2T\pretrain_models\MBart_trimmed
+  transformer: D:\VK-S2T\pretrain_models\MBart_trimmed
+  visual_encoder: D:\VK-S2T\pretrain_models\mytran
   sign_proj: True

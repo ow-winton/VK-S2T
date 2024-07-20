@@ -1,0 +1,11 @@
+三个输入
+1. 文本
+2. 图片
+3. 关键点（转成了图片）
+
+预训练：
+1. 文本经过mbart编码，算了词的attention mask
+
+问题1. 爆内存
+问题2. data augmentation resize
+问题3.
