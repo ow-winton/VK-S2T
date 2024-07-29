@@ -2,6 +2,7 @@
 This file is modified from:
 https://github.com/facebookresearch/deit/blob/main/utils.py
 """
+from timm.utils import dispatch_clip_grad
 
 # Copyright (c) 2015-present, Facebook, Inc.
 # All rights reserved.
@@ -516,10 +517,23 @@ class KLLoss(torch.nn.Module):
         self.error_metric = error_metric
 
     def forward(self, prediction, label):
+        print("prediction:", prediction)
+        print("label:", label)
+
+
         batch_size = prediction.shape[0]
         probs1 = F.log_softmax(prediction, 1)
         probs2 = F.softmax(label * 10, 1)
+
+
+        # 打印概率分布
+        print("probs1:", probs1)
+        print("probs2:", probs2)
+
+
         loss = self.error_metric(probs1, probs2) * batch_size
+
+        print("loss:", loss)
         return loss
         
 def loss_fn_kd(outputs, teacher_outputs, T=1.0, alpha=0.5):

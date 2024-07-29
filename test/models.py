@@ -10,7 +10,7 @@ import math
 import torchvision.transforms.functional as F
 import torchvision
 from torch.nn.utils.rnn import pad_sequence
-#import pytorchvideo.models.x3d as x3d
+# import pytorchvideo.models.x3d as x3d
 import utils as utils
 
 """ PyTorch MBART model."""
@@ -30,7 +30,6 @@ from transformers.models.mbart.modeling_mbart import MBartLearnedPositionalEmbed
 
 from collections import OrderedDict
 
-
 import copy
 import math
 import random
@@ -45,13 +44,14 @@ from definition import *
 from hpman.m import _
 from pathlib import Path
 
+
 class PositionalEncoding(nn.Module):
     def __init__(self,
                  emb_size: int,
                  dropout: float,
                  maxlen: int = 5000):
         super(PositionalEncoding, self).__init__()
-        den = torch.exp(- torch.arange(0, emb_size, 2)* math.log(10000) / emb_size)
+        den = torch.exp(- torch.arange(0, emb_size, 2) * math.log(10000) / emb_size)
         pos = torch.arange(0, maxlen).reshape(maxlen, 1)
         pos_embedding = torch.zeros((maxlen, emb_size))
         pos_embedding[:, 0::2] = torch.sin(pos * den)
@@ -81,6 +81,7 @@ def make_resnet(name='resnet18'):
     model.fc = nn.Identity()
     return model
 
+
 class resnet(nn.Module):
     def __init__(self):
         super(resnet, self).__init__()
@@ -94,24 +95,8 @@ class resnet(nn.Module):
             end = start + length
             x_batch.append(x[start:end])
             start = end
-        x = pad_sequence(x_batch,padding_value=PAD_IDX,batch_first=True)
+        x = pad_sequence(x_batch, padding_value=PAD_IDX, batch_first=True)
         return x
-# 测试代码
-if __name__ == "__main__":
-    # 创建模型
-    model = resnet()
-
-    # 创建一个随机输入张量 (batch_size, channels, height, width)
-    input_tensor = torch.randn(6, 3, 224, 224)  # 假设 batch_size = 6，图像尺寸为 224x224
-
-    # 定义每个样本的长度
-    lengths = [1, 1, 1, 1, 1, 1]  # 假设每个图像都对应一个特征
-
-    # 执行前向传播
-    output = model(input_tensor, lengths)
-
-    # 打印输出形状
-    print(output.shape)
 
 
 class TemporalConv(nn.Module):
@@ -142,13 +127,13 @@ class TemporalConv(nn.Module):
         self.temporal_conv = nn.Sequential(*modules)
 
     def forward(self, x):
-        print(f"Input shape (before permute): {x.shape}")
+        # print(f"Input shape (before permute): {x.shape}")
         x = x.permute(0, 2, 1)
-        print(f"Shape after permute: {x.shape}")
+        # print(f"Shape after permute: {x.shape}")
         x = self.temporal_conv(x)
-        print(f"Output shape (after conv): {x.shape}")
+        # print(f"Output shape (after conv): {x.shape}")
         x = x.permute(0, 2, 1)
-        print(f"Final output shape (after permute back): {x.shape}")
+        # print(f"Final output shape (after permute back): {x.shape}")
         return x
 
 
@@ -168,6 +153,8 @@ def make_head(inplanes, planes, head_type):
         return nn.Linear(inplanes, planes, bias=False)
     else:
         return nn.Identity()
+
+
 class TextCLIP(nn.Module):
     def __init__(self, config=None, inplanes=1024, planes=1024, head_type='identy'):
         super(TextCLIP, self).__init__()
@@ -177,7 +164,8 @@ class TextCLIP(nn.Module):
         self.lm_head = make_head(inplanes, planes, head_type)
 
     def forward(self, tgt_input):
-        txt_logits = self.model_txt(input_ids=tgt_input['input_ids'].cuda(), attention_mask=tgt_input['attention_mask'].cuda())[0]
+        txt_logits = \
+        self.model_txt(input_ids=tgt_input['input_ids'].cuda(), attention_mask=tgt_input['attention_mask'].cuda())[0]
         output = txt_logits[torch.arange(txt_logits.shape[0]), tgt_input['input_ids'].argmax(dim=-1)]
         return self.lm_head(output), txt_logits
 
@@ -209,64 +197,101 @@ class Text_Decoder(nn.Module):
         return lm_logits
 
 
-
 class SLRCLIP(nn.Module):
-    def __init__(self, config, embed_dim=1024) :
+    def __init__(self, config, embed_dim=1024):
         super(SLRCLIP, self).__init__()
         self.model_txt = TextCLIP(config, inplanes=embed_dim, planes=embed_dim)
         self.model_images = ImageCLIP(config, inplanes=embed_dim, planes=embed_dim)
-        self.rgb_fusion = rgb_fusion(frozen=False)
 
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
 
     def get_model_txt(self):
         return self.model_txt
 
+    @property
     def get_encoder_hidden_states(self):
         return self.encoder_hidden_states
-    def detect_keypoints(self,x):
-        keypoints = []
-        non_zero = (x!=0).any(dim=1)
-        batch_indices,rows,cols = torch.nonzero(non_zero,as_tuple=True)
-        keypoints = list(zip(batch_indices.tolist(),rows.tolist(),cols.tolist()))
-        return keypoints
-    def forward(self, src_input1,src_input2,tgt_input):
-        # 两个input
-        keypoints = self.detect_keypoints(src_input2)
-        fused_img = self.rgb_fusion(src_input1,src_input2)
-        expanded_img = self.rgb_fusion.expand_keypoints(fused_img,keypoints,radius=5)
-        image_features = self.model_images(expanded_img)
-        text_features,self.encoder_hidden_states = self.model_txt(tgt_input)
 
-        image_features = image_features/image_features.norm(dim=-1, keepdim=True)
-        text_features = text_features/text_features.norm(dim=-1, keepdim=True)
+    def forward(self, src_input, tgt_input):
+        image_features = self.model_images(src_input)
+        text_features, self.encoder_hidden_states = self.model_txt(tgt_input)
 
+        # 打印特征向量
+        print(f"Image features: {image_features.shape}, {image_features}")
+        print(f"Text features: {text_features.shape}, {text_features}")
+
+        # normalized features
+        image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+        text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+        print("image_features", image_features.shape)
+        print("text_features", text_features.shape)
+        # cosine similarity as logits
         logit_scale = self.logit_scale.exp()
-        logits_per_image = logit_scale*image_features @text_features.t()
+        logits_per_image = logit_scale * image_features @ text_features.t()
         logits_per_text = logit_scale * text_features @ image_features.t()
 
-        ground_truth = torch.eye(logits_per_image.shape[0],device=logits_per_text.device,dtype=logits_per_image.dtype,requires_grad=False)
+        ground_truth = torch.eye(logits_per_image.shape[0], device=logits_per_text.device, dtype=logits_per_image.dtype,
+                                 requires_grad=False)
 
         return logits_per_image, logits_per_text, ground_truth
+
+
 class ImageCLIP(nn.Module):
-    def __init__(self, config, embed_dim=1024) :
+    def __init__(self, config, inplanes=1024, planes=1024, head_type='linear'):
         super(ImageCLIP, self).__init__()
         self.config = config
-
+        self.backbone = RGBFeatureFusion(frozen=config.get('freeze_backbone', False))
         self.model = FeatureExtracter()
+        self.trans_encoder = MBartForConditionalGeneration.from_pretrained(
+            config['model']['visual_encoder']).get_encoder()
+        self.cls_token = nn.Parameter(torch.randn(1, 1, inplanes))
+        self.lm_head = make_head(inplanes, planes, head_type)
 
-        return
+    def forward(self, src_input):
+        images = src_input['img_ids'].cuda()  # 修改这里
+        keypoints = src_input['kp_ids'].cuda()  # 确认这里的键也是正确的
+        src_length_batch = src_input['src_length_batch']
+        frames_feature = self.backbone(images, keypoints, src_length_batch)
+
+        # 打印帧特征
+        print(f"Frames feature: {frames_feature.shape}, {frames_feature}")
+
+        # x = self.model(src_input['img_ids'].cuda(), src_input['src_length_batch'])  # [b, n, c]
+        attention_mask = src_input['attention_mask']
+        B, N, C = frames_feature.shape
+        cls_token = repeat(self.cls_token, '() n d -> b n d', b=B)
+        x = torch.cat((cls_token, frames_feature), dim=1)
+        # attention_mask = F.pad(attention_mask.flatten(1), (1, 0), value=1.)  # [b, 64] --> [b, 65]
+
+        # 假设 attention_mask 是一个二维张量
+        # 假设 attention_mask 是一个二维张量
+        batch_size, seq_length = attention_mask.size()
+
+        # 使用 torch.cat 进行填充
+        ones = torch.ones(batch_size, 1, device=attention_mask.device, dtype=attention_mask.dtype)
+        attention_mask = torch.cat((ones, attention_mask.flatten(1)), dim=1)
+
+        outs = self.trans_encoder(inputs_embeds=x, attention_mask=attention_mask.cuda(), return_dict=True)
+        last_hidden_state = outs['last_hidden_state']
+        output = self.lm_head(last_hidden_state[:, 0, :])
+
+        print(f"Output: {output.shape}, {output}")
+
+        return output
+
 
 class rgb_fusion(nn.Module):
-    def __init__(self,frozen = False):
+    def __init__(self, frozen=False):
         super(rgb_fusion, self).__init__()
         self.alpha = nn.Parameter(torch.tensor(255))
         if frozen:
-            self.alpha.requires_grad =False
-    def forward(self, x1,x2):
+            self.alpha.requires_grad = False
+
+    def forward(self, x1, x2):
         out = x1 + self.alpha * x2
         return out
-    def expand_keypoints(self,x,keypoints,radius=5):
+
+    def expand_keypoints(self, x, keypoints, radius=5):
         # 半径可以设置和更改试试，后续可以改成可以训练的值
         for (batch_idx, row, col) in keypoints:
             # 确保索引不会越界
@@ -282,43 +307,45 @@ class rgb_fusion(nn.Module):
     # 用boardcast 广播直接一步扩散，而不是用循环
 
 
-
 class FeatureExtracter(nn.Module):
     def __init__(self, frozen=False):
         super(FeatureExtracter, self).__init__()
-        self.conv_2d = resnet() # InceptionI3d()
+        self.conv_2d = resnet()  # InceptionI3d()
         self.conv_1d = TemporalConv(input_size=512, hidden_size=1024, conv_type=2)
 
         if frozen:
             for param in self.conv_2d.parameters():
                 param.requires_grad = False
+
     def forward(self,
-                src:Tensor,
+                src: Tensor,
                 src_length_batch):
-        src = self.conv_2d(src,src_length_batch)
+        src = self.conv_2d(src, src_length_batch)
         src = self.conv_1d(src)
 
         return src
 
+
 class V_encoder(nn.Module):
-    def __init__(self, emb_size,feature_size,config):
+    def __init__(self, emb_size, feature_size, config):
         super(V_encoder, self).__init__()
         self.config = config
-        self.src_emb = nn.Linear(feature_size,emb_size)
+        self.src_emb = nn.Linear(feature_size, emb_size)
         modules = []
         modules.append(nn.BatchNorm1d(emb_size))
         modules.append(nn.ReLU(inplace=True))
         self.bn_ac = nn.Sequential(*modules)
 
         for m in self.modules():
-            if isinstance(m, (nn.Conv1d,nn.Linear)):
+            if isinstance(m, (nn.Conv1d, nn.Linear)):
                 nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
             elif isinstance(m, nn.BatchNorm1d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-    def forward(self, src:Tensor):
+
+    def forward(self, src: Tensor):
         src = self.src_emb(src)
-        src = self.bn_ac(src.permute(0,2,1)).permute(0,2,1)
+        src = self.bn_ac(src.permute(0, 2, 1)).permute(0, 2, 1)
         return src
 
 
@@ -340,7 +367,7 @@ def config_decoder(config):
 
 
 class VK_model(nn.Module):
-    def __init__(self, config,args,embed_dim=1024):
+    def __init__(self, config, args, embed_dim=1024):
         super(VK_model, self).__init__()
         self.args = args
         self.config = config
@@ -349,7 +376,7 @@ class VK_model(nn.Module):
         self.mbart = config_decoder(config)
 
         if config['model']['sign_proj']:
-            self.sign_emb = V_encoder(emb_size=embed_dim,feature_size=embed_dim, config = config)
+            self.sign_emb = V_encoder(emb_size=embed_dim, feature_size=embed_dim, config=config)
             self.embed_scale = math.sqrt(embed_dim) if config['training']['scale_embedding'] else 1.0
         else:
             self.sign_emb = nn.Identity()
@@ -378,11 +405,11 @@ class VK_model(nn.Module):
         keypoints = src_input['kp_ids'].cuda()  # 确认这里的键也是正确的
         src_length_batch = src_input['src_length_batch']
 
-        print(f"Images shape: {images.shape}")
-        print(f"Keypoints shape: {keypoints.shape}")
+        # print(f"Images shape: {images.shape}")
+        # print(f"Keypoints shape: {keypoints.shape}")
 
         frames_feature = self.backbone(images, keypoints, src_length_batch)
-        print(f"Frames features shape after backbone: {frames_feature.shape}")
+        # print(f"Frames features shape after backbone: {frames_feature.shape}")
         attention_mask = src_input['attention_mask']
 
         inputs_embeds = self.sign_emb(frames_feature)
@@ -427,7 +454,7 @@ class VK_model(nn.Module):
                          )
         return out['logits']
 
-    def generate(self,src_input,max_new_tokens,num_beams,decoder_start_token_id):
+    def generate(self, src_input, max_new_tokens, num_beams, decoder_start_token_id):
         inputs_embeds, attention_mask = self.share_forward(src_input)
 
         out = self.mbart.generate(
@@ -442,48 +469,48 @@ class VK_model(nn.Module):
 
 
 class RGBFeatureFusion(nn.Module):
-    def __init__(self,frozen = False):
-        super(RGBFeatureFusion,self).__init__()
+    def __init__(self, frozen=False):
+        super(RGBFeatureFusion, self).__init__()
         self.alpha = nn.Parameter(torch.tensor(1.0))
         self.conv_2d = resnet()
         self.conv_1d = TemporalConv(input_size=512, hidden_size=1024, conv_type=2)
 
-
         if frozen:
             for param in self.conv_2d.parameters():
                 param.requires_grad = False
-            self.alpha.requires_grad =False
+            self.alpha.requires_grad = False
 
-    def forward(self, x1, x2, src_length_batch, radius=5):
+    def forward(self, x1, x2, src_length_batch, radius=2):
         # 检测关键点
         keypoints = self.detect_keypoints(x2)
-        print(len(keypoints))
-        if keypoints and keypoints[0][0] == 0:  # 检查是否有关键点，且第一个关键点属于第一个批次\
 
-            for i, (batch_idx, row, col) in enumerate(keypoints):
-                if batch_idx == 0:  # 只考虑第一个批次
-                    if i == 0:  # 只打印第一个关键点的信息，表示第一张图片的第一个关键点
-                        print(f"Keypoint {i}: Batch {batch_idx}, Position ({row}, {col}), Value {x2[batch_idx, :, row, col]}")
-
-
+        print(f"Keypoints: {keypoints}")
+        # print(len(keypoints))
+        # if keypoints and keypoints[0][0] == 0:  # 检查是否有关键点，且第一个关键点属于第一个批次\
+        #
+        #     for i, (batch_idx, row, col) in enumerate(keypoints):
+        #         if batch_idx == 0:  # 只考虑第一个批次
+        #             if i == 0:  # 只打印第一个关键点的信息，表示第一张图片的第一个关键点
+        # print(f"Keypoint {i}: Batch {batch_idx}, Position ({row}, {col}), Value {x2[batch_idx, :, row, col]}")
 
         # 扩展关键点
         x2 = self.expand_keypoints(x2, keypoints, radius)
-        print(f"x2 shape after expand_keypoints: {x2.shape}")
+        print(f"x2 after expand_keypoints: {x2.shape}, {x2}")
+        # print(f"x2 shape after expand_keypoints: {x2.shape}")
 
         # 加权求和
         out = x1 + self.alpha * x2
-        print(f"out shape after alpha * x2: {out.shape}")
-        out = F.resize(out,(256,256))
-        print("输出维度大小",out.shape)
+        # print(f"out shape after alpha * x2: {out.shape}")
+        out = F.resize(out, (256, 256))
+        # print("输出维度大小",out.shape)
         # 通过 2D 卷积
         out = self.conv_2d(out, src_length_batch)
-        print(f"out shape after conv_2d: {out.shape}")
+        # print(f"out shape after conv_2d: {out.shape}")
 
         # 通过 1D 卷积
         out = self.conv_1d(out)
-        print(f"out shape after conv_1d: {out.shape}")
-
+        # print(f"out shape after conv_1d: {out.shape}")
+        print(f"Output after RGBFeatureFusion: {out.shape}, {out}")
         return out
 
     def expand_keypoints(self, x, keypoints, radius=2):
@@ -495,8 +522,9 @@ class RGBFeatureFusion(nn.Module):
             col_end = min(x.size(3), col + radius + 1)
             value = x[batch_idx, :, row, col].unsqueeze(-1).unsqueeze(-1)
             x[batch_idx, :, row_start:row_end, col_start:col_end] = value
-            print(f"Expanding at ({row}, {col}) with radius {radius}: row {row_start} to {row_end}, col {col_start} to {col_end}")
+            # print(f"Expanding at ({row}, {col}) with radius {radius}: row {row_start} to {row_end}, col {col_start} to {col_end}")
         return x
+
     def detect_keypoints(self, x):
         # 检测关键点
         keypoints = []
